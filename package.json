@@ -1,0 +1,23 @@
+{
+	"name": "hyperdev-req-resp-drills-starter-files",
+	"version": "0.0.1",
+	"description": "",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"dependencies": {
+		"express": "^4.14.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Thinkful-Ed/hyperdev-req-resp-drills-starter-files"
+	},
+	"keywords": [
+		"thinkful",
+		"node",
+		"hyperdev",
+		"express"
+	],
+	"license": "MIT"
+}
