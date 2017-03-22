@@ -1,0 +1,6 @@
+Okay, the tests all pass now.  You're just a day or so away from this, so I might as well tell you, that when you do the Travis CI tests for blog-post API challenge, make sure that the HTTP status code you return in blogPostRouter.js for the PUT method matches up with what you test for in the endpoint test.  For some reason, there was a http 204 that was being sent from the blogPostRouter.js file and it should have been a 200.  No idea how it got there, since I just copied it from the lesson text if memory serves, but oh well.  Somebody fixed it in an open-session in like 10 seconds.  Amazing how fast these guys can find stuff!  :smile:
+
+Yeah, it was in the repo the lesson asked us to clone.  There were a couple other things too, like be sure to comment out the app.listen line in server.js and to replace it with the if (require.main === module) { runServer.catch( err => console.error(err) ); };   You also had to make sure to write your own runServer and closeServer methods in server.js.  It's covered earlier in the Unit, but I missed it the first time.  Anyway, just a heads up.
+
+[10:46]
+This is for the challenge I'm talking about now.  Where we use Travis CI app and push it up to Travis and and heroku and so forth.

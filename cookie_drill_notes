@@ -1,0 +1,11 @@
+1. GET request to '/'
+2. client sends cookie (if it exists on the browser) along with that GET request. It should be in a `cookies` object in the request or request header
+3. browser receives GET request if it is set up to do so at that endpoint
+4. if there is no parser, the server (at least with Express) will not contain a `req.cookie` field in your route handler (`app.get('/')` ). It will just contain everything else. If you try to log `req.cookies` here you will get nothing...or `undefined` I think
+5. if there is a cookie parser, then the server will parser the portion of the request that has a cookie. It returns the cookie object that was sent from the browser, or an empty object if there are no cookies (I think this is the norm and how `cookie-parser` does it, varies from parser to parser). Mind you, at this point the browser has _still not recieved_ `index.html`
+6. Server processes the request. In the case of this drill it sends back `index.html`, although it could just as easily send a string, or JSON.
+7. Unless you explicitly add the cookie to the response, I do not believe it will be sent at all. There are other middleware packages that will automatically add the cookies to the response for you, and my guess is you will get to those soon.
+8. Server sends the cookie to the client with `index.html`. Now `$.cookie` will parse / set the value of the cookie on the client side. Now you should have a value to manipulate the DOM with. Rarely would you manipulate the DOM as much as you would be doing logins/logouts with cookies or recently browsed data or something like that. Anyways, in this case it sets the cookie value in the browser so that you can use it.
+
+[9:08]
+The next time you load the page, the browser should have stored the cookie that it recieved from the server the first time (this is why you `set the cookie`). It will already have the cookie sent when it asks for the html. You would then see it in `req.cookies`
