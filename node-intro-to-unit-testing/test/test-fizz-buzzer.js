@@ -1,5 +1,5 @@
 const fizzbuzz = require('../fizzBuzzer');
-
+const debug = require('debug')('debug');
 const should = require('chai').should();
 
 describe('fizzbuzz', function () {
@@ -12,12 +12,15 @@ describe('fizzbuzz', function () {
             {numberInObj: 4},
             "4",
             ["1", "2"],
-            [1,2]
+            [1,2],
+            "",
+            null,
+            undefined
         ];
 
         notNumbers.forEach(function(notnumber) {
             // test to make sure every loop ran
-            // console.log(notnumber);
+            // debug(notnumber);
 
         (function(){
             fizzbuzz(notnumber)
@@ -33,7 +36,7 @@ describe('fizzbuzz', function () {
 
         multiplesOfFifteen.forEach (function(numberdividedbyFifteen) {
             // test each loop
-            // console.log(numberdividedbyFifteen, fizzbuzz(numberdividedbyFifteen))
+            // debug(numberdividedbyFifteen, fizzbuzz(numberdividedbyFifteen))
         let fizzbuzzOutput = fizzbuzz(numberdividedbyFifteen);
         fizzbuzzOutput.should.equal('fizz-buzz'); 
 
@@ -47,7 +50,7 @@ describe('fizzbuzz', function () {
         multiplesOfFive.forEach(function(numberdividedbyFive) {
             
         // test each loop 
-        // console.log(numberdividedbyFive, fizzbuzz(numberdividedbyFive));
+        // debug(numberdividedbyFive, fizzbuzz(numberdividedbyFive));
         let buzzOutput = fizzbuzz(numberdividedbyFive);
         buzzOutput.should.equal('buzz');
         
@@ -62,7 +65,7 @@ describe('fizzbuzz', function () {
         multiplesofThree.forEach(function(numberdividedbyThree) {
         
         // test all loops
-        // console.log(numberdividedbyThree, fizzbuzz(numberdividedbyThree));
+        // debug(numberdividedbyThree, fizzbuzz(numberdividedbyThree));
 
          let fizzOutput = fizzbuzz(numberdividedbyThree);
          fizzOutput.should.equal('fizz');   
@@ -78,7 +81,7 @@ describe('fizzbuzz', function () {
         negativeNums.forEach(function(negativeNumber) {
 
             // test each loop
-            console.log(negativeNumber, fizzbuzz(negativeNumber));
+            debug(negativeNumber, fizzbuzz(negativeNumber));
 
             let negativeOutput = fizzbuzz(negativeNumber);
             negativeOutput.should.equal(negativeNumber);
