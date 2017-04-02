@@ -62,6 +62,8 @@ describe('Shopping List', function() {
       });
   });
 
+
+
   // test strategy:
   //  1. make a POST request with data for a new item
   //  2. inspect response object and prove it has right
@@ -135,10 +137,185 @@ describe('Shopping List', function() {
       .get('/shopping-list')
       .then(function(res) {
         return chai.request(app)
-          .delete(`/shopping-list/${res.body[0].id}`);
-      })
-      .then(function(res) {
-        res.should.have.status(204);
+          .delete(`/shopping-list/${res.body[0].id}`)
+          .then(function(res) {
+            console.log('this is the res.status for the delete');
+            res.should.have.status(204);
+          });
       });
   });
 });
+
+
+describe('Recipe List', function() {
+
+  before(function(){
+    return runServer();
+  });
+
+
+  after(function(){
+    return closeServer();
+  });
+
+  it('Should recive a list of recipes on GET', function() {
+
+    return chai.request(app)
+      .get('/recipes')
+      .then (function(res){
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.should.be.a('array');
+        res.body.length.should.be.at.least(1);
+
+        const recipeKeys = ['name', 'id', 'ingredients'];
+
+        res.body.forEach(function(recipe) {
+          recipe.should.be.a('object');
+          recipe.should.include.keys(recipeKeys);
+          
+        });
+      });
+  }); // ends tests on GET
+
+  it('Should add a recipe on post', function(){
+    const newRecipe = {
+      name: "Green Borscht",
+      ingredients: [
+        "5 cups of water",
+        "4 cups of spinach",
+        "5 hard-boiled eggs",
+        "2 large cucumbers",
+        "3 carrots",
+        "1 tablespoon sour cream",
+        "5 tablespoons of lemon juice"
+      ]
+    };
+
+    return chai.request(app)
+      .post('/recipes')
+      .send(newRecipe)
+      .then(function(res) {
+        res.should.have.status(201);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        res.body.should.include.keys('name', 'id', 'ingredients');
+        res.body.id.should.not.be.null;
+        res.body.should.deep.equal(Object.assign(newRecipe, {id: res.body.id}));
+
+      });
+
+  }); // ends tests on POST endpoint
+
+  it("Should update recipes on PUT", function(){
+
+    const updatedRecipe = {
+      name: "Lemonade",
+      ingredients: [
+        "water",
+        "lemon",
+        "sugar"
+      ]
+    };
+
+    return chai.request(app)
+    .get('/recipes')
+    .then(function (res) { 
+      // console.log(res.body);
+      // console.log(res.body[0]);
+      updatedRecipe.id = res.body[0].id;
+
+      return chai.request(app)
+      .put(`/recipes/${updatedRecipe.id}`)
+      .send(updatedRecipe);
+    })
+    .then(function (res){
+      res.should.have.status(200);
+      res.body.should.be.a('object');
+      res.should.be.json;
+      res.body.should.deep.equal(updatedRecipe);
+    });
+
+  }); // ends update/put tests
+  
+  it("Should return an error message if the request has the wrong fields", function () {
+    
+    const incompleteRecipe = {
+      "ingredients": [
+        "water",
+        "olive oil",
+        "tomatoes",
+        "honey"
+      ]
+    };
+
+
+    return chai.request(app)
+    .get('/recipes')
+    .then(function (res) {
+      // console.log (res.body[res.body.length-1].id)
+      incompleteRecipe.id = res.body[0].id;
+      // console.log(incompleteRecipe);
+
+      return chai.request(app)
+      .put(`/recipes/${incompleteRecipe.id}`)
+      .send(incompleteRecipe);
+      
+    })
+    .catch(function (err, res) {
+      // console.log(err);
+      // console.log(err.response.text);
+      err.should.have.status(400);
+      err.response.text.should.not.be.empty;
+      err.response.text.should.be.a('string');
+      
+    });
+    
+  }); // ends put missing field test
+
+  it('Should return a error message when the path and request ids do not match', function () { 
+    const updatedRecipe = {
+      "name": "Some kind of stuff",
+      "ingredients": [
+        "water",
+        "olive oil",
+        "tomatoes",
+        "honey"
+      ]
+    };
+
+
+    return chai.request(app)
+  .get('/recipes')
+  .then(function (res) {
+    // console.log (res.body[res.body.length-1].id)
+    updatedRecipe.id = res.body[0].id;
+    // console.log(incompleteRecipe);
+    const wrongID = res.body[res.body.length-1].id;
+
+    return chai.request(app)
+    .put(`/recipes/${wrongID}`)
+    .send(updatedRecipe)
+    .catch(function (err) {
+      console.log(err.response.text);
+      err.should.have.status(400);
+      err.response.text.should.be.a('string'); 
+    
+    });
+  });
+  });
+
+  it('Should delete items on delete requests', function() {
+
+    return chai.request(app)
+    .get('/recipes')
+    .then(function (res) {
+      return chai.request(app)
+      .delete(`/recipes/${res.body[0].id}`)
+      .then(function (res) {
+        res.should.have.status(204);
+      });
+    });  
+  });
+}); // ends tests
+
